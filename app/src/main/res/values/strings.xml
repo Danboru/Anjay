@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">GoJay</string>
-    <string name="title_activity_maps">GoJay</string>
+
+    <string name="app_name">Rajane Eskrim</string>
+    <string name="title_activity_maps">Rajane Eskrim</string>
     <string name="google_maps_key">AIzaSyCb5cUZAOOwgRLuhMCkFkDC0cCxq4YI_n8</string>
+
 </resources>

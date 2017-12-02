@@ -60,17 +60,21 @@ import id.eightstudio.www.googlemaps.Helper.PlaceAutoCompleteHelper;
 import id.eightstudio.www.googlemaps.Helper.Utils;
 import id.eightstudio.www.googlemaps.Model.Jarak;
 import id.eightstudio.www.googlemaps.Model.VMargin;
+import id.eightstudio.www.googlemaps.Utils.GPSRequest;
 import id.eightstudio.www.googlemaps.Widget.MyMarker;
 import id.eightstudio.www.googlemaps.Widget.TariffView;
 import id.eightstudio.www.googlemaps.Widget.ToastProgress;
 
-public class MapsActivity extends AppCompatActivity implements DirectionDrawHelper.OnNavigateReadyListener, View.OnClickListener, OnMapReadyCallback, PlaceAutoCompleteHelper.onSuggestResultListener, PlaceAutoCompleteHelper.onTextFocusListener {
+public class MapsActivity extends AppCompatActivity implements
+        DirectionDrawHelper.OnNavigateReadyListener,
+        View.OnClickListener, OnMapReadyCallback,
+        PlaceAutoCompleteHelper.onSuggestResultListener,
+        PlaceAutoCompleteHelper.onTextFocusListener {
 
     final int REQUEST_CHECK_SETTINGS = 122;
     final int REQUEST_LOCATION = 125;
     //LatLng start_place, end_place;
     private EditText fok;
-    private Toolbar toolbar;
     private MyMarker centerMarker;
     private View searchArea, mapFrame, TariffVroot;
 
@@ -90,18 +94,13 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     private Geocoder geoCoder;
     private boolean mMapIsTouched;
     private Marker firstMarker;
-    private android.os.Handler handler = new android.os.Handler();
     private ToastProgress tprog;
-    private ProgressBar waitIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
 
-        waitIndicator = toolbar.findViewById(R.id.toolbarProgressBar1);
         mapFrame = findViewById(R.id.map_frame);
         tariff = findViewById(R.id.tariff);
         TariffVroot = findViewById(R.id.tariffviewLinearLayout2);
@@ -134,6 +133,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
             public void onClick(View p1) {
+
                 onMarkerClick();
             }
         });
@@ -158,7 +158,8 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     private void setSearchbarMargin() {
 
         int sbheight = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        int resourceId = getResources().getIdentifier("status_bar_height",
+                "dimen", "android");
 
         if (resourceId > 0) {
             sbheight = getResources().getDimensionPixelSize(resourceId);
@@ -198,11 +199,16 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     private void checkPerms() {
 
         //Jika permisi granted
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         } else {
+
             //Request gps
-            GPSrequest();
+            //GPSrequest();
+            new GPSRequest().GPSrequest(this, pickerHelper);
             gmaps.setMyLocationEnabled(true);
             gmaps.getMyLocation();
         }
@@ -216,10 +222,14 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    GPSrequest();
+                    //GPSrequest();
+                    new GPSRequest().GPSrequest(this, pickerHelper);
                 } else {
 
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                            && ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         //    ActivityCompat#requestPermissions
                         // here to request the missing permissions, and then overriding
@@ -344,8 +354,17 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
 
         // Dapatkan jarak dari titik A ke B dari google maps
         // ini akurat karena menghitung berdasarkan rute jalan yang ditempuh
-        double jarak = j.distanceInKm;
-        DecimalFormat df = new DecimalFormat("#.#");
+
+        double jarak = 0;
+        DecimalFormat df = null;
+
+        try {
+            jarak = j.distanceInKm;
+            df = new DecimalFormat("#.#");
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
         //df.setRoundingMode(RoundingMode.CEILING);
         haszoom = false;
 
@@ -439,9 +458,11 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                 // Jika tidak maka jalankan GPSrequest()
                 final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    GPSrequest();
+                    //GPSrequest();
+                    new GPSRequest().GPSrequest(MapsActivity.this, pickerHelper);
+
                 } else {
-                    // Jika GPS aktif, tampikan waiting indikator dan cari lokasi pengguna
+                    // Jika GPS aktif, tampilkan waiting indikator dan cari lokasi pengguna
                     if (tprog.isShowing()) {
                         tprog.cancel();
                         setTitle("" + System.currentTimeMillis());
@@ -604,7 +625,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     }
 
     // Override dispatchTouchEvent
-    // untuk menentukan apakah view sedang di sentuh atau tidak
+    // Untuk menentukan apakah view sedang di sentuh atau tidak
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
@@ -635,13 +656,15 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             // tampilkan notif untuk mencancel booking (navigasi)
             AlertDialog.Builder d = new AlertDialog.Builder(this);
             d.setTitle("Konfirmasi");
-            d.setMessage("Batalkan Booking?");
+            d.setMessage("Batalkan Pesanan ?");
 
             //Membatalkan booking
             d.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
                 @Override
                 public void onClick(DialogInterface p1, int p2) {
+
+                    gmaps.moveCamera(CameraUpdateFactory.newLatLngZoom(home, 16f));
 
                     // Clear, kembalikan ke awal
                     addr_from.setTag(new LatLng(0, 0));
@@ -657,7 +680,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                     addr_from.requestFocus();
                     haszoom = false;
                     //waitIndicator.setVisibility(View.INVISIBLE);
-                    Toast.makeText(MapsActivity.this, "Booking Dibatalkan", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MapsActivity.this, "Pesanan Dibatalkan", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -671,70 +694,6 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         }
     }
 
-    // Code taken from https://stackoverflow.com/a/29872703
-    public void GPSrequest() {
-
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true); //this is the key ingredient
-
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(pickerHelper.mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult(MapsActivity.this, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
-                        }
-                        break;
-
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        break;
-                }
-            }
-        });
-    }
-
-    // Code taken from https://stackoverflow.com/a/843716
-    // unused for now
-    private void AlertNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -742,7 +701,10 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
 
                 switch (resultCode) {
                     case RESULT_OK:
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(this,
+                                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
                             //    ActivityCompat#requestPermissions
                             // here to request the missing permissions, and then overriding
@@ -757,7 +719,10 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                         break;
 
                     case RESULT_CANCELED:
-                        GPSrequest();
+                        //GPSrequest();
+
+                        new GPSRequest().GPSrequest(this, pickerHelper);
+
                         break;
                 }
                 break;

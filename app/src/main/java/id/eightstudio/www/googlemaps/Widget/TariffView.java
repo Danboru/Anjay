@@ -27,10 +27,12 @@ public class TariffView extends FrameLayout implements CompoundButton.OnCheckedC
         super(context, attrs, defStyle);
         initView();
     }
+
     public TariffView(Context context, AttributeSet attrs) {
         super(context, attrs);
 		initView();
     }
+
     public TariffView(Context context) {
         super(context);
         initView();
@@ -72,6 +74,7 @@ public class TariffView extends FrameLayout implements CompoundButton.OnCheckedC
 		rb2.setChecked(true);
 		addView(view);
 	}
+
 	@Override
 	public void onCheckedChanged(CompoundButton p1, boolean p2) {
 		if(rb1==p1&&p2) {
