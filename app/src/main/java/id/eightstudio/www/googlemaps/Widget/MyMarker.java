@@ -3,6 +3,7 @@ package id.eightstudio.www.googlemaps.Widget;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -14,12 +15,13 @@ import android.widget.ImageView;
 import android.view.*;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
-import id.eightstudio.www.googlemaps.R;
+import android.widget.Toast;
 
+import id.eightstudio.www.googlemaps.R;
 
 public class MyMarker extends FrameLayout
 {
-	private int colbase,colfocus,padding,paddingH,hh,ww,hhtype,wwtype;
+	private int colbase, colfocus, padding, paddingH, hh, ww, hhtype, wwtype;
 	float radius;
 
 	private ImageView imageView_948;
@@ -27,26 +29,27 @@ public class MyMarker extends FrameLayout
 	private CharSequence txt;
 	private LinearLayout linearLayout_721;
 	private TextView textView_670;
-	private View.OnClickListener onclic;
+	private View.OnClickListener onClick;
 
 	@RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
 	public MyMarker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-		//Toast.makeText(context, "A"+attrs.getStyleAttribute()+","+defStyle,0).show();
+//		Toast.makeText(context, "A " + attrs.getStyleAttribute() +"," + defStyle , Toast.LENGTH_SHORT).show();
         initView();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
 	public MyMarker(Context context, AttributeSet attrs) {
         super(context, attrs);
+
 		TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.ValueTip);
-		colbase=a.getColor(R.styleable.ValueTip_colorNormal, 0);
-		colfocus=a.getColor(R.styleable.ValueTip_colorPressed,0);
-		txt=a.getString(R.styleable.ValueTip_text);
-		radius=a.getDimension(R.styleable.ValueTip_radius,0);
-		padding=(int)a.getDimension(R.styleable.ValueTip_paddingVertical,40);
-		paddingH=(int)a.getDimension(R.styleable.ValueTip_paddingHorizontal,60);
-		//Toast.makeText(context, "B"+txt,0).show();
+		colbase = a.getColor(R.styleable.ValueTip_colorNormal, 0);
+		colfocus = a.getColor(R.styleable.ValueTip_colorPressed,0);
+		txt = a.getString(R.styleable.ValueTip_text);
+		radius = a.getDimension(R.styleable.ValueTip_radius,0);
+		padding = (int) a.getDimension(R.styleable.ValueTip_paddingVertical,40);
+		paddingH = (int) a.getDimension(R.styleable.ValueTip_paddingHorizontal,60);
+//		Toast.makeText(context, "B " + txt ,Toast.LENGTH_SHORT).show();
         initView();
     }
 
@@ -60,19 +63,23 @@ public class MyMarker extends FrameLayout
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		//LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(widthMeasureSpec, heightMeasureSpec);
 		//linearLayout_721.setLayoutParams(layoutParams);
-		hh=MeasureSpec.getSize( heightMeasureSpec);
-		ww=MeasureSpec.getSize( widthMeasureSpec);
-		hhtype=MeasureSpec.getMode(heightMeasureSpec);
-		wwtype=MeasureSpec.getMode(widthMeasureSpec);
-		////Toast.makeText(getContext(), "kari",0).show();
-		android.util.Log.d("kk", "measure");
-		LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(wwtype==MeasureSpec.EXACTLY? LayoutParams.MATCH_PARENT:LayoutParams.WRAP_CONTENT, hhtype==MeasureSpec.EXACTLY? LayoutParams.MATCH_PARENT:LayoutParams.WRAP_CONTENT);
+		hh = MeasureSpec.getSize( heightMeasureSpec);
+		ww = MeasureSpec.getSize( widthMeasureSpec);
+		hhtype = MeasureSpec.getMode(heightMeasureSpec);
+		wwtype = MeasureSpec.getMode(widthMeasureSpec);
+
+		//Toast.makeText(getContext(), "kari",Toast.LENGTH_SHORT).show();
+
+		Log.d("kk", "measure");
+		LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(wwtype == MeasureSpec.EXACTLY ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT,
+				hhtype == MeasureSpec.EXACTLY ? LayoutParams.MATCH_PARENT : LayoutParams.WRAP_CONTENT);
 		textView_670.setLayoutParams(lp);
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 	
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
 	private void initView() {
+
 		linearLayout_721 = new LinearLayout(getContext());
 		linearLayout_721.setOrientation(LinearLayout.VERTICAL);
 		linearLayout_721.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -92,7 +99,7 @@ public class MyMarker extends FrameLayout
 		textView_670.setPadding(paddingH,padding,paddingH,padding);
 		textView_670.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null,getResources().getDrawable(R.drawable.ic_chevron_right),null);
 		//textView_670.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-		////Toast.makeText(getContext(), "tipe W:"+wwtype+"--tipe H:"+MeasureSpec.AT_MOST,0).show();
+		//Toast.makeText(getContext(), "tipe W:"+wwtype+"--tipe H:"+MeasureSpec.AT_MOST,Toast.LENGTH_SHORT).show();
 		linearLayout_721.addView(textView_670);
 		imageView_948 = new ImageView(getContext());
 		imageView_948.setImageResource(R.drawable.ic_triangle);
@@ -114,15 +121,19 @@ public class MyMarker extends FrameLayout
 						});
 				}
 			});
+
 		linearLayout_721.setOnTouchListener(new View.OnTouchListener(){
 				@Override
 				public boolean onTouch(View p1, MotionEvent p2) {
+
 					switch(p2.getAction()){
-						case MotionEvent.ACTION_DOWN:
+
+						case MotionEvent.ACTION_DOWN :
 							shape.setColor(colfocus);
 							imageView_948.setColorFilter(colfocus);
 							break;
-						case MotionEvent.ACTION_UP:
+
+						case MotionEvent.ACTION_UP :
 							shape.setColor(colbase);
 							imageView_948.setColorFilter(colfocus);
 							break;
@@ -130,17 +141,18 @@ public class MyMarker extends FrameLayout
 					return false;
 				}
 			});
+
 		linearLayout_721.setOnClickListener(new View.OnClickListener(){
 				@Override
 				public void onClick(View p1) {
-					if(onclic!=null) onclic.onClick(p1);
+					if( onClick!=null ) onClick.onClick(p1);
 				}
 			});
 	}
 
 	@Override
 	public void setOnClickListener(View.OnClickListener l) {
-		onclic=l;
+		onClick=l;
 	}
 	
 	public void setColorRes(int normal, int pressed, int textColor){
@@ -167,20 +179,22 @@ public class MyMarker extends FrameLayout
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		return super.onInterceptTouchEvent(ev);
 	}
-	
-	/*@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		switch(event.getAction()){
-			case MotionEvent.ACTION_DOWN:
-				shape.setColor(colfocus);
-				imageView_948.setColorFilter(colfocus);
-				break;
-			case MotionEvent.ACTION_UP:
-				shape.setColor(colbase);
-				imageView_948.setColorFilter(colbase);
-				break;
-		}
-		////Toast.makeText(getContext(), ""+event.getButtonState(),0).show();
-		return false;
-	}*/
+
+	//TODO : Comment this
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		switch(event.getAction()){
+//			case MotionEvent.ACTION_DOWN:
+//				shape.setColor(colfocus);
+//				imageView_948.setColorFilter(colfocus);
+//				break;
+//			case MotionEvent.ACTION_UP:
+//				shape.setColor(colbase);
+//				imageView_948.setColorFilter(colbase);
+//				break;
+//		}
+//
+//		Toast.makeText(getContext(), "" + event.getButtonState(),Toast.LENGTH_SHORT ).show();
+//		return false;
+//	}
 }

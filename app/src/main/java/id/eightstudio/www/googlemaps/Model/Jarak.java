@@ -1,4 +1,5 @@
 package id.eightstudio.www.googlemaps.Model;
+
 import org.json.*;
 
 public class Jarak
@@ -14,6 +15,7 @@ public class Jarak
 		this.distance = distance;
 		this.distanceInKm = this.distance * 0.001;
 	}
+
 	public Jarak(JSONObject data){
 		try {
 			JSONObject dur=data.getJSONObject("duration");

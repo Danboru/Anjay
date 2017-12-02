@@ -50,7 +50,8 @@ public class MapAnimator {
 	}
 
     public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute) {
-        if (firstRunAnimSet == null){
+
+		if (firstRunAnimSet == null){
             firstRunAnimSet = new AnimatorSet();
         } else {
             firstRunAnimSet.removeAllListeners();
@@ -135,7 +136,8 @@ public class MapAnimator {
         ObjectAnimator foregroundRouteAnimator = ObjectAnimator.ofObject(this, "routeIncreaseForward", new RouteEvaluator(), bangaloreRoute.toArray());
         foregroundRouteAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         foregroundRouteAnimator.addListener(new Animator.AnimatorListener() {
-				@Override
+
+        		@Override
 				public void onAnimationStart(Animator animation) {
 
 				}
@@ -161,7 +163,8 @@ public class MapAnimator {
         firstRunAnimSet.playSequentially(foregroundRouteAnimator,
 										 percentageCompletion);
         firstRunAnimSet.addListener(new Animator.AnimatorListener() {
-				@Override
+
+        		@Override
 				public void onAnimationStart(Animator animation) {
 
 				}

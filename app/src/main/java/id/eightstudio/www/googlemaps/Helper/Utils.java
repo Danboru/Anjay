@@ -18,7 +18,8 @@ import id.eightstudio.www.googlemaps.Model.VMargin;
 public class Utils {
 
 	private static Utils.OnCameraComplete camcallback;
-	// teken from https://stackoverflow.com/a/35843019
+
+	// Teken from https://stackoverflow.com/a/35843019
 	public static LatLng getRandLocation(LatLng point, int radius) {
 
         List<LatLng> randomPoints = new ArrayList<>();
@@ -60,7 +61,8 @@ public class Utils {
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
-	public static double distance(LatLng pos1, LatLng pos2) {
+
+    public static double distance(LatLng pos1, LatLng pos2) {
 		Location loc1 = new Location("");
 		loc1.setLatitude(pos1.latitude);
 		loc1.setLongitude(pos1.longitude);
@@ -72,7 +74,8 @@ public class Utils {
 		double distanceInKm = loc1.distanceTo(loc2) * 0.001;
 		return distanceInKm;
 	}
-	// taken from https://stackoverflow.com/a/3694410 (with small modification)
+
+	// Taken from https://stackoverflow.com/a/3694410 (with small modification)
 	public static double distance(LatLng pos1, LatLng pos2, char unit) {
 		double theta = pos1.longitude - pos2.longitude;
 		double dist = Math.sin(deg2rad(pos1.latitude)) * Math.sin(deg2rad(pos2.latitude)) + Math.cos(deg2rad(pos1.latitude)) * Math.cos(deg2rad(pos2.latitude)) * Math.cos(deg2rad(theta));
@@ -103,9 +106,11 @@ public class Utils {
 	public interface OnCameraComplete{
 		void onComplete();
 	}
+
 	public void setOnCameraCompleteListener(OnCameraComplete x){
 		camcallback=x;
 	}
+
 	// Camera correction by Agus Ibrahim
 	private static void cameraCorrection(final Context ctx, final GoogleMap gmap, final LatLng start, final LatLng end, final VMargin padding) {
 		GoogleMap.CancelableCallback cameraOnFinish=new GoogleMap.CancelableCallback(){
@@ -119,22 +124,32 @@ public class Utils {
 				// TODO: Implement this method
 			}
 		};
+
 		Point addr_startPoint=gmap.getProjection().toScreenLocation(start);
 		Point addr_endPoint = gmap.getProjection().toScreenLocation(end);
 		DisplayMetrics dm=ctx.getResources().getDisplayMetrics();
 		int maxX=dm.widthPixels;
 		if (addr_startPoint.y < padding.searchbar_margin || addr_endPoint.y < padding.searchbar_margin) {
+
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-1f), 1000, cameraOnFinish);
 			android.util.Log.d("jos", "Batas atas");
+
 		} else if (addr_startPoint.x < dp2px(ctx, 10) || addr_endPoint.x < dp2px(ctx, 10) || addr_startPoint.x > maxX - dp2px(ctx, 10) || addr_endPoint.x > maxX - dp2px(ctx, 10)) {
+
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-0.2f), 1000, cameraOnFinish);
 			android.util.Log.d("jos", "Batas samping");
+
 		} else if (addr_startPoint.y > (dm.heightPixels - padding.tariffview_margin) || addr_endPoint.y > (dm.heightPixels - padding.tariffview_margin)) {
+
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-0.2f), 1000, cameraOnFinish);
 			android.util.Log.d("jos", "Batas bawah");
-		}else{
+
+		} else {
+
 			if(camcallback!=null) camcallback.onComplete();
+
 		}
+
 		android.util.Log.d("jos", "batas: " + (dm.heightPixels - padding.tariffview_margin));
 		android.util.Log.d("jos", "marker: " + addr_endPoint.y);
 		android.util.Log.d("jos", "70dp: " + dp2px(ctx, 70));
@@ -155,6 +170,7 @@ public class Utils {
 				}
 			});
 	}
+
 	public static float dp2px(Context context, float dipValue) {
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);

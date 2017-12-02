@@ -8,4 +8,5 @@ public class VMargin
 		this.searchbar_margin = searchbar_margin;
 		this.tariffview_margin = tariffview_margin;
 	}
+
 }

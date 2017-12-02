@@ -1,14 +1,5 @@
 package id.eightstudio.www.googlemaps.Helper;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.model.LatLngBounds;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,20 +15,31 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.data.DataBufferUtils;
-import android.support.v4.app.FragmentActivity;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.app.Application;
 import android.widget.ImageView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePredictionBuffer;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferUtils;
 import com.google.android.gms.location.LocationServices;
+
 import id.eightstudio.www.googlemaps.R;
 
 
-public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFailedListener, Application.ActivityLifecycleCallbacks, View.OnFocusChangeListener {
+public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFailedListener,
+		Application.ActivityLifecycleCallbacks, View.OnFocusChangeListener {
 
 	public GoogleApiClient mGoogleApiClient;
 	private PlaceAutoCompleteAdapter mAdapter;
@@ -46,20 +48,23 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 	private LatLngBounds mBounds = null;
 	private Drawable placeIcon;
 	private PlaceAutoCompleteHelper.onTextFocusListener callbacx;
+
 	@Override
 	public void onConnectionFailed(ConnectionResult p1) {
 		if (callback != null) callback.onSuggestConnectionFailed(p1);
 	}
+
 	public interface onSuggestResultListener {
 		void onSuggestResult(Place place, AutoCompleteTextView act);
 		void onSuggestConnectionFailed(ConnectionResult result);
 		void onSuggestFail(Status status);
 	}
+
 	public interface onTextFocusListener {
 		void onFocus(AutoCompleteTextView act);
 	}
 
-//	public PlaceAutoCompleteHelper(AutoCompleteTextView ... act, FragmentActivity fa) {
+//	public PlaceAutoCompleteHelper(AutoCompleteTextView...act, FragmentActivity fa) {
 //		Context ctx = act[0].getContext();
 //		mGoogleApiClient = new GoogleApiClient.Builder(ctx)
 //			.enableAutoManage(fa, 0, this)
@@ -80,9 +85,11 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 	public void install(Context ctx){
 		((Activity)ctx).getApplication().registerActivityLifecycleCallbacks(this);
 	}
+
 	public void setBound(LatLngBounds b) {
 		mBounds = b;
 	}
+
 	public PlaceAutoCompleteHelper(AutoCompleteTextView... act) {
 		Context ctx = act[0].getContext();
 		mGoogleApiClient = new GoogleApiClient.Builder(ctx)
@@ -99,12 +106,15 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 		
 		//((Activity)ctx).getApplication().registerActivityLifecycleCallbacks(this);
 	}
+
 	public void setOnSuggestResultListener(onSuggestResultListener x) {
 		callback = x;
 	}
+
 	public void setOnFocusListener(onTextFocusListener x) {
 		callbacx = x;
 	}
+
 	@Override
 	public void onFocusChange(View p1, boolean p2) {
 		if (p2) {
@@ -112,12 +122,15 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 			if (callbacx != null) callbacx.onFocus(myact);
 		}
  	}
-	public void connect() {
+
+ 	public void connect() {
 		mGoogleApiClient.connect();
 	}
+
 	public void disconnect() {
 		mGoogleApiClient.disconnect();
 	}
+
 	private AdapterView.OnItemClickListener mAutocompleteClickListener
 	= new AdapterView.OnItemClickListener() {
         @Override
@@ -129,6 +142,7 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
 		}
     };
+
 	private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
 	= new ResultCallback<PlaceBuffer>() {
         @Override
@@ -178,15 +192,19 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = super.getView(position, convertView, parent);
 			AutocompletePrediction item = getItem(position);
- 			TextView textView1 = (TextView) row.findViewById(R.id.place1);
-			TextView textView2 = (TextView) row.findViewById(R.id.place2);
-			ImageView img=(ImageView) row.findViewById(R.id.itemplaceImageView1);
+
+ 			TextView textView1 = row.findViewById(R.id.place1);
+			TextView textView2 = row.findViewById(R.id.place2);
+			ImageView img= row.findViewById(R.id.itemplaceImageView1);
+
 			textView1.setText(item.getPrimaryText(STYLE_BOLD));
 			textView2.setText(item.getFullText(STYLE_BOLD));
 			img.setColorFilter(android.graphics.Color.GRAY);
+
   			return row;
 		}
-  		@Override
+
+		@Override
 		public Filter getFilter() {
 			return new Filter() {
 				@Override
@@ -228,13 +246,17 @@ public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFail
 
 		private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
 			if (mGoogleApiClient.isConnected()) {
+
 				PendingResult<AutocompletePredictionBuffer> results =
                     Places.GeoDataApi
 					.getAutocompletePredictions(mGoogleApiClient, constraint.toString(),
 												mBounds, mPlaceFilter);
+
    				AutocompletePredictionBuffer autocompletePredictions = results
                     .await(60, TimeUnit.SECONDS);
+
   				final Status status = autocompletePredictions.getStatus();
+
 				if (!status.isSuccess()) {
 					if (callback != null) callback.onSuggestFail(status);
 					autocompletePredictions.release();

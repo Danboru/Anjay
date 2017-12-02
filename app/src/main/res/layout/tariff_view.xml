@@ -6,9 +6,9 @@
 	android:orientation="vertical">
 
 	<ImageButton
+		android:id="@+id/tariffviewMyLoc"
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
-		android:id="@+id/tariffviewMyLoc"
 		android:src="@drawable/ic_crosshairs_gps"
 		android:layout_alignParentRight="true"
 		android:layout_marginRight="20dp"
@@ -36,11 +36,12 @@
 			android:id="@+id/tariffviewLinearLayout1">
 
 			<TextView
+				android:id="@+id/tariffviewJarak"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:text="Jarak (25,6 km)"
-				android:id="@+id/tariffviewJarak"/>
+				/>
 
 		</LinearLayout>
 
@@ -56,24 +57,27 @@
 			android:background="@drawable/bg_rounded_corners_white">
 
 			<RadioButton
+				android:id="@+id/sbRadioButton1"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
-				android:id="@+id/sbRadioButton1"/>
+				/>
 
 			<TextView
+				android:id="@+id/sbTextView1"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
-				android:text="ANJAY-PAY"
+				android:text="ONLINE-PAY"
 				android:layout_toRightOf="@id/sbRadioButton1"
 				android:layout_alignBottom="@id/sbRadioButton1"
 				android:layout_alignTop="@id/sbRadioButton1"
 				android:gravity="center_vertical"
 				android:layout_marginLeft="10dp"
 				android:textStyle="bold"
-				android:id="@+id/sbTextView1"/>
+				/>
 
 			<TextView
+				android:id="@+id/sbTextView2"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -81,9 +85,10 @@
 				android:layout_below="@id/sbTextView1"
 				android:layout_alignStart="@id/sbTextView1"
 				android:textColor="#EB433B"
-				android:id="@+id/sbTextView2"/>
+				android:layout_alignLeft="@id/sbTextView1" />
 
 			<TextView
+				android:id="@+id/tariffviewReload"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -92,18 +97,19 @@
 				android:layout_below="@id/sbTextView1"
 				android:layout_marginLeft="10dp"
 				android:textColor="#38AD54"
-				android:id="@+id/tariffviewReload"
 				android:textStyle="bold"
 				android:visibility="gone"/>
 
 			<RadioButton
+				android:id="@+id/sbRadioButton2"
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:layout_below="@id/sbTextView2"
 				android:layout_marginTop="10dp"
-				android:id="@+id/sbRadioButton2"/>
+				/>
 
 			<TextView
+				android:id="@+id/sbTextView5"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -114,9 +120,10 @@
 				android:layout_alignBottom="@id/sbRadioButton2"
 				android:gravity="center_vertical"
 				android:textStyle="bold"
-				android:id="@+id/sbTextView5"/>
+				/>
 
 			<TextView
+				android:id="@+id/tariffviewOldPrice"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -124,27 +131,29 @@
 				android:layout_alignParentRight="true"
 				android:layout_alignBottom="@id/sbRadioButton1"
 				android:textStyle="bold"
-				android:id="@+id/tariffviewOldPrice"
 				android:layout_alignStart="@id/sbTextView1"
 				android:gravity="center_vertical|end"
 				android:singleLine="true"
-				android:layout_alignTop="@id/sbRadioButton1"/>
+				android:layout_alignTop="@id/sbRadioButton1"
+				android:layout_alignLeft="@id/sbTextView1" />
 
 			<TextView
+				android:layout_below="@id/tariffviewOldPrice"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:text="Rp 36.000"
-				android:layout_below="@id/tariffviewOldPrice"
 				android:layout_alignStart="@id/tariffviewOldPrice"
 				android:textStyle="bold"
 				android:textColor="#EB433B"
 				android:id="@+id/tariffviewLowPrice"
 				android:gravity="end"
 				android:layout_alignParentRight="true"
-				android:singleLine="true"/>
+				android:singleLine="true"
+				android:layout_alignLeft="@id/tariffviewOldPrice" />
 
 			<TextView
+				android:id="@+id/tariffviewNormalPrice"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:textAppearance="?android:attr/textAppearanceSmall"
@@ -153,17 +162,17 @@
 				android:layout_alignStart="@id/tariffviewOldPrice"
 				android:layout_alignBottom="@id/sbTextView5"
 				android:textStyle="bold"
-				android:id="@+id/tariffviewNormalPrice"
 				android:gravity="center_vertical|end"
 				android:singleLine="true"
-				android:layout_alignTop="@id/sbRadioButton2"/>
+				android:layout_alignTop="@id/sbRadioButton2"
+				android:layout_alignLeft="@id/tariffviewOldPrice" />
 
 		</RelativeLayout>
 
 		<Button
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:text="Pesan Bajaj"
+			android:text="Antar Pesanan"
 			android:padding="10dp"
 			android:background="@drawable/btn_order"
 			android:textColor="#FFFFFF"

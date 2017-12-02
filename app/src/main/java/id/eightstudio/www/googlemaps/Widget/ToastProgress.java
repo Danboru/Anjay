@@ -15,6 +15,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 
 public class ToastProgress extends Toast{
+
 	Context ctx;
 	Runnable run, runw;
 	Toast t;
@@ -26,6 +27,7 @@ public class ToastProgress extends Toast{
 	private LinearLayout root;
 	private GradientDrawable shape;
 	private boolean showing;
+
 	public ToastProgress(android.content.Context context) {
 		super(context);
 		this.ctx=context;
@@ -48,9 +50,11 @@ public class ToastProgress extends Toast{
 		shape = new GradientDrawable();
 		shape.setShape(GradientDrawable.RECTANGLE);
 	}
+
 	public interface onTimedOutListener{
 		void onTimedOut();
 	}
+
 	public ToastProgress setOnTimedOutListener(onTimedOutListener x){
 		callback=x;
 		return this;

@@ -1,6 +1,5 @@
 package id.eightstudio.www.googlemaps.Helper;
 
-import com.google.android.gms.maps.model.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,17 +15,19 @@ import org.json.JSONObject;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.content.Context;
+import android.graphics.Point;
+
+import com.google.android.gms.maps.model.*;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import android.content.Context;
-import android.graphics.Point;
 
+import id.eightstudio.www.googlemaps.R;
 import id.eightstudio.www.googlemaps.Model.Jarak;
 import id.eightstudio.www.googlemaps.Model.VMargin;
-import id.eightstudio.www.googlemaps.R;
 
 public class DirectionDrawHelper {
 
@@ -71,9 +72,11 @@ public class DirectionDrawHelper {
 		if(anim!=null) anim.clearPolyline();
 		anim=null;
 	}
+
 	public void setOnNavigateReadyListener(OnNavigateReadyListener x) {
 		callback = x;
 	}
+
 	private String getDirectionsUrl(LatLng origin, LatLng dest) {
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
@@ -83,7 +86,8 @@ public class DirectionDrawHelper {
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
         return url;
     }
-	private String downloadUrl(String strUrl) throws IOException {
+
+    private String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
@@ -109,8 +113,11 @@ public class DirectionDrawHelper {
         }
         return data;
     }
+
+    //Get JSON response
 	private class DownloadTask extends AsyncTask<String, Void, String> {
-        @Override
+
+		@Override
         protected String doInBackground(String... url) {
             String data = "";
             try {
@@ -133,11 +140,14 @@ public class DirectionDrawHelper {
 			android.util.Log.d("lok", "res:" + result);
         }
     }
+
 	private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> > {
  		public Jarak jarak;
-		ArrayList<LatLng> points = null;
+
+ 		ArrayList<LatLng> points = null;
         @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+		protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
             JSONObject jObject;
             List<List<HashMap<String, String>>> routes = null;
             try {
@@ -150,6 +160,8 @@ public class DirectionDrawHelper {
             }
             return routes;
         }
+
+
 		@Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             
@@ -193,6 +205,7 @@ public class DirectionDrawHelper {
 	
 	
  	public class DirectionsJSONParser {
+
 		public Jarak jarak=null;
  		public List<List<HashMap<String,String>>> parse(JSONObject jObject) {
  			List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String,String>>>() ;
@@ -228,6 +241,7 @@ public class DirectionDrawHelper {
 			}
 			return routes;
 		}
+
  		private List<LatLng> decodePoly(String encoded) {
 			List<LatLng> poly = new ArrayList<LatLng>();
 			int index = 0, len = encoded.length();
