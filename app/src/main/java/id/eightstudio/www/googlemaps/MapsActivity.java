@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -67,18 +68,18 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
 
     final int REQUEST_CHECK_SETTINGS = 122;
     final int REQUEST_LOCATION = 125;
-    //    LatLng start_place, end_place;
+    //LatLng start_place, end_place;
     private EditText fok;
     private Toolbar toolbar;
     private MyMarker centerMarker;
-    private View searcharea, mapframe, TariffVroot;
+    private View searchArea, mapFrame, TariffVroot;
 
     private AutoCompleteTextView addr_from, addr_to;
 
     private LatLng home = new LatLng(-6.813738, 110.847039);
 
     private TariffView tariff;
-    private ViewPropertyAnimator searchareaAnimate;
+    private ViewPropertyAnimator searchAreaAnimate;
     boolean sbOnceMove = true;
     private VMargin vmargin;
     boolean haszoom = false;
@@ -91,6 +92,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     private Marker firstMarker;
     private android.os.Handler handler = new android.os.Handler();
     private ToastProgress tprog;
+    private ProgressBar waitIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,20 +101,24 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         toolbar = findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        //waitIndicator = (ProgressBar) toolbar.findViewById(R.id.toolbarProgressBar1);
-        mapframe = findViewById(R.id.map_frame);
+        waitIndicator = toolbar.findViewById(R.id.toolbarProgressBar1);
+        mapFrame = findViewById(R.id.map_frame);
         tariff = findViewById(R.id.tariff);
         TariffVroot = findViewById(R.id.tariffviewLinearLayout2);
         centerMarker = findViewById(R.id.mainactivity_makercenter);
-        addr_from = findViewById(R.id.booking2_from);
-        addr_to = findViewById(R.id.booking2_dest);
+        addr_from = findViewById(R.id.booking_form_origin);
+        addr_to = findViewById(R.id.booking_form_dest);
         fok = findViewById(R.id.fok);
         findViewById(R.id.clearfrom).setOnClickListener(this);
         findViewById(R.id.clearto).setOnClickListener(this);
-        searcharea = findViewById(R.id.searcharea);
+        searchArea = findViewById(R.id.searcharea);
+
+        //TODO : Set Origin dan Destination
+        //Menentukan lat long dari lokasi antar dan lokasi tujuan
         addr_from.setTag(new LatLng(0, 0));
         addr_to.setTag(new LatLng(0, 0));
-        searchareaAnimate = searcharea.animate();
+
+        searchAreaAnimate = searchArea.animate();
 
         initilizeMap();
 
@@ -123,6 +129,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         pickerHelper.setOnSuggestResultListener(this);
         pickerHelper.setOnFocusListener(this);
 
+        //TODO : Center marker action
         centerMarker.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
             @Override
@@ -131,6 +138,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             }
         });
 
+        //
         KeyboardVisibilityEvent.setEventListener(
                 this,
                 new KeyboardVisibilityEventListener() {
@@ -151,21 +159,26 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
 
         int sbheight = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+
         if (resourceId > 0) {
             sbheight = getResources().getDimensionPixelSize(resourceId);
         }
+
         int dp10 = (int) Utils.dp2px(this, 10);
         final int mtop = sbheight + (int) Utils.dp2px(this, 10);
-        RelativeLayout.LayoutParams salp = (RelativeLayout.LayoutParams) searcharea.getLayoutParams();
+
+        RelativeLayout.LayoutParams salp = (RelativeLayout.LayoutParams) searchArea.getLayoutParams();
         salp.setMargins(dp10, mtop, dp10, dp10);
-        searcharea.setLayoutParams(salp);
-        searcharea.post(new Runnable() {
+        searchArea.setLayoutParams(salp);
+
+        //Runable
+        searchArea.post(new Runnable() {
             @Override
             public void run() {
                 TariffVroot.post(new Runnable() {
                     @Override
                     public void run() {
-                        vmargin = new VMargin(mtop + searcharea.getHeight(), TariffVroot.getHeight());
+                        vmargin = new VMargin(mtop + searchArea.getHeight(), TariffVroot.getHeight());
                     }
                 });
             }
@@ -184,9 +197,11 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     //Cek permisi aplikasi
     private void checkPerms() {
 
+        //Jika permisi granted
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         } else {
+            //Request gps
             GPSrequest();
             gmaps.setMyLocationEnabled(true);
             gmaps.getMyLocation();
@@ -196,6 +211,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     // Runtime permission on result
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
         if (requestCode == REQUEST_LOCATION) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -227,7 +243,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void onMarkerClick() {
 
-        // centerMarker di klik
+        // CenterMarker di klik
         LatLng cur = gmaps.getCameraPosition().target;
         if (addr_from.isFocused()) {
             setAddrValue(addr_from, cur);
@@ -274,15 +290,19 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
     @Override
     public void onFocus(final AutoCompleteTextView act) {
         LatLng actpos = (LatLng) act.getTag();
-        // atur centerMarker tampil saat rute telah siap, saat sebelumnya sembunyi
+
+        // Atur centerMarker tampil saat rute telah siap, saat sebelumnya sembunyi
         if (isNavigationReady() && centerMarker.getVisibility() == View.GONE && (addr_from.isFocused() || addr_to.isFocused())) {
             centerMarker.setVisibility(View.VISIBLE);
         }
+
+        //
         if (act == addr_from && drivers.size() > 0 && !drivers.get(0).isVisible()) {
             for (Marker m : drivers) {
                 m.setVisible(true);
             }
         }
+
         // Saat EditText fokus, sorot ke arah alamat EditText tersebut
         if (actpos.latitude != 0) {
             gmaps.animateCamera(CameraUpdateFactory.newLatLng(actpos), 1500, new GoogleMap.CancelableCallback() {
@@ -300,9 +320,10 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                 }
             });
         }
+
         // Atur label pada centerMarker
         if (act == addr_from) {
-            centerMarker.setText("LOKASI JEMPUT");
+            centerMarker.setText("RAJANE ESKRIM");
             centerMarker.setColorRes(R.color.colorAddrStart, R.color.colorAddrStartPressed, 0);
         } else if (act == addr_to) {
             centerMarker.setText("LOKASI TUJUAN");
@@ -319,8 +340,9 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         centerMarker.setVisibility(View.GONE);
         fok.setFocusable(true);
         fok.requestFocus();
-        tariff.show();
-        // dapatkan jarak dari titik A ke B dari google maps
+        tariff.show();//Menampilkan view tarif
+
+        // Dapatkan jarak dari titik A ke B dari google maps
         // ini akurat karena menghitung berdasarkan rute jalan yang ditempuh
         double jarak = j.distanceInKm;
         DecimalFormat df = new DecimalFormat("#.#");
@@ -332,25 +354,27 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             m.setVisible(false);
         }
 
+        //Hapus marker pertama
         if (firstMarker != null) firstMarker.remove();
-        // set label jarak serta tarif
-        tariff.setTarifByJarak(jarak);
+
+        // Set label jarak serta tarif
+        tariff.setTarifByJarak(jarak); //Melakukan perhitungan tarif
         tariff.setJarak(String.format("Jarak (%s Km)", df.format(jarak)));
     }
 
-    // Gagal menemukan rute
+    // Ketika Gagal menemukan rute
     @Override
     public void onNavigationFailed() {
         Toast.makeText(this, "Gagal menemukan rute. Cek koneksi Internet kamu", Toast.LENGTH_SHORT).show();
     }
 
-    // Gagal membuat koneksi ke layanan Google
+    // Ketika Gagal membuat koneksi ke layanan Google
     @Override
     public void onSuggestConnectionFailed(ConnectionResult result) {
         Toast.makeText(this, "Tidak bisa terhubung ke layanan Google.", Toast.LENGTH_SHORT).show();
     }
 
-    // Gagal memuat suggestion
+    // Ketika Gagal memuat suggestion
     @Override
     public void onSuggestFail(Status status) {
         Toast.makeText(this, "Tidak ditemukan, Cek koneksi Internet kamu", Toast.LENGTH_SHORT).show();
@@ -372,6 +396,7 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
 
                 // Atur centerMarker samar saat maps digerakan
                 centerMarker.setAlpha(0.5f);
+
                 // Hanya saat maps digerakan menggunakan tangan (buka programatically)
                 if (mMapIsTouched) {
                     // one shot action
@@ -387,42 +412,47 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                 }
             }
         });
+
         // Camera idle (diam) listener
         // di trigger saat pertama maps dijalankan dan saat selesai dari move (menggeser maps)
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
 
-                // atur centerMarker ke solid (bukan samar lagi)
+                // Atur centerMarker ke solid (bukan samar lagi)
                 centerMarker.setAlpha(1.0f);
-                // animasi tampil pada searchbar
-                //searchareaAnimate.setStartDelay(1500).setDuration(800).translationY(0).start();
+
+                // Animasi tampil pada searchbar
+                // searchareaAnimate.setStartDelay(1500).setDuration(800).translationY(0).start();
                 sbOnceMove = true;
             }
         });
 
-        // Saat menekan tombol GPS (my location)
+        // Saat menekan tombol GPS (My location)
+        //Mencari lokasi device melalui GPS
         tariff.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public boolean onMyLocationButtonClick() {
 
                 // Cek apakah GPS aktif
-                // jika tidak maka jalankan GPSrequest()
+                // Jika tidak maka jalankan GPSrequest()
                 final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     GPSrequest();
                 } else {
-                    // jika GPS aktif, tampikan waiting indikator dan cari lokasi pengguna
+                    // Jika GPS aktif, tampikan waiting indikator dan cari lokasi pengguna
                     if (tprog.isShowing()) {
                         tprog.cancel();
                         setTitle("" + System.currentTimeMillis());
                         return false;
                     }
+
                     movetomylocation = true;
                     gmaps.getMyLocation();
                     tprog.show("Waiting for location...", Gravity.CENTER, (1000 * 60) * 2);
                     tprog.setOnTimedOutListener(new ToastProgress.onTimedOutListener() {
+
                         @Override
                         public void onTimedOut() {
                             Toast.makeText(MapsActivity.this, "Timed Out", Toast.LENGTH_SHORT).show();
@@ -433,10 +463,11 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             }
         });
 
-        // di trigger saat lokasi pengguna terdeteksi atau terjadi perubahan lokasi
+        // Di trigger saat lokasi pengguna terdeteksi atau terjadi perubahan lokasi
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location loc) {
+
                 if (movetomylocation) {
                     tprog.cancel();
                     gmaps.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(loc.getLatitude(), loc.getLongitude()), 15f), 1500, null);
@@ -446,9 +477,10 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         });
     }
 
-    // fungsi fokus pada navigasi
-    // di trigger saat keyboard hilang dari searchbar (biasanya saat menekan back) dan saat tekan back pada mode fokus navigasi
+    // Fungsi fokus pada navigasi
+    // Di trigger saat keyboard hilang dari searchbar (biasanya saat menekan back) dan saat tekan back pada mode fokus navigasi
     private void setNavigationFocus() {
+
         centerMarker.setVisibility(View.GONE);
         LatLng[] na = getNaviagatePoint();
         Utils.requestCenterCamera(this, gmaps, na[0], na[1], vmargin, null);
@@ -460,14 +492,14 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
         }
     }
 
-    // fungsi untuk mencari tahu poin A dan B (dari dan lokasi tujuan)
+    // Fungsi untuk mencari tahu poin A dan B (dari dan lokasi tujuan)
     private LatLng[] getNaviagatePoint() {
         LatLng addr_fromPos = (LatLng) addr_from.getTag();
         LatLng addr_toPos = (LatLng) addr_to.getTag();
         return new LatLng[]{addr_fromPos, addr_toPos};
     }
 
-    // fungsi mengecek apakah rute siap (point A dan B sudah ditentukan)
+    // Fungsi mengecek apakah rute siap (point A dan B sudah ditentukan)
     private boolean isNavigationReady() {
         LatLng[] na = getNaviagatePoint();
         return (na[0].latitude != 0 && na[1].latitude != 0);
@@ -496,13 +528,14 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
             return;
         }
 
-        // dapatkan lokasi A dan B
+        // Dapatkan lokasi A dan B
         LatLng[] na = getNaviagatePoint();
         android.util.Log.d("lok", "start:" + na[0] + "----end:" + na[1]);
 
-        // saat rute siap (point A dan B sudah ditentukan)
+        // Saat rute siap (point A dan B sudah ditentukan)
         if (isNavigationReady()) {
-            // cegah jarak yang terlalu jauh (batas 27Km)
+
+            // Cegah jarak yang terlalu jauh (batas 27Km)
             // ini tidak akurat karena mengabaikan rute jalan yang ada
             // tapi ini bekerja offline
             if (Utils.distance(na[0], na[1]) > 27) {
@@ -512,22 +545,23 @@ public class MapsActivity extends AppCompatActivity implements DirectionDrawHelp
                 return;
             }
 
-            // jika path (jalur navigasi) sudah dibuat
+            // Jika path (jalur navigasi) sudah dibuat
             if (DirectionDrawHelper.anim != null) {
-                // hapus path serta marker A B
+                // Hapus path serta marker A B
                 DirectionDrawHelper.anim.clearPolyline();
                 DirectionDrawHelper.add_startMarker.remove();
                 DirectionDrawHelper.add_endMarker.remove();
             }
 
             UIUtil.hideKeyboard(this);
-            // cari arah navigasi menggunakan DirectionDrawHelper dan membuat path (jalur navigasi) nya
+            // Cari arah navigasi menggunakan DirectionDrawHelper dan membuat path (jalur navigasi) nya
             DirectionDrawHelper pos = new DirectionDrawHelper(this, gmaps, na[0], na[1], vmargin);
             pos.setOnNavigateReadyListener(this);
             pos.start();
 
             // Saat navigasi belum siap (baru menentukan 1 point, A/B)
         } else {
+
             // Jika belum di zoom, zoom kamera ke point pertama
             if (!haszoom || gmaps.getCameraPosition().zoom <= 16f)
                 gmaps.animateCamera(CameraUpdateFactory.zoomBy(0.8f), 1000, new GoogleMap.CancelableCallback() {

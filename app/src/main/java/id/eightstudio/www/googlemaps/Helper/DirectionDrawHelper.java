@@ -91,6 +91,7 @@ public class DirectionDrawHelper {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
+
         try {
             URL url = new URL(strUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -243,6 +244,7 @@ public class DirectionDrawHelper {
 		}
 
  		private List<LatLng> decodePoly(String encoded) {
+
 			List<LatLng> poly = new ArrayList<LatLng>();
 			int index = 0, len = encoded.length();
 			int lat = 0, lng = 0;

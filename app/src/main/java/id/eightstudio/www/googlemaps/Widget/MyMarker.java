@@ -1,6 +1,5 @@
 package id.eightstudio.www.googlemaps.Widget;
 
-
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.view.*;
 import android.content.res.TypedArray;
 import android.graphics.drawable.GradientDrawable;
-import android.widget.Toast;
 
 import id.eightstudio.www.googlemaps.R;
 

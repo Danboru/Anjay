@@ -110,6 +110,7 @@
 			android:layout_alignBottom="@id/booking1ImageView4"/>
 
 		<AutoCompleteTextView
+			android:id="@+id/booking_form_origin"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:ems="10"
@@ -120,8 +121,7 @@
 			android:layout_alignBottom="@id/booking1ImageView1"
 			android:layout_alignTop="@id/booking1ImageView1"
 			android:singleLine="true"
-			android:hint="Set Lokasi jemput"
-			android:id="@+id/booking2_from"
+			android:hint="Lokasi Rajane Eskrim"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<View
@@ -130,10 +130,11 @@
 			android:layout_width="match_parent"
 			android:layout_toRightOf="@id/booking1View1"
 			android:layout_centerVertical="true"
-			android:layout_alignStart="@id/booking2_from"
-			android:layout_alignLeft="@id/booking2_from" />
+			android:layout_alignStart="@id/booking_form_origin"
+			android:layout_alignLeft="@id/booking_form_origin" />
 
 		<AutoCompleteTextView
+			android:id="@+id/booking_form_dest"
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:ems="10"
@@ -145,7 +146,6 @@
 			android:layout_alignBottom="@id/booking1ImageView4"
 			android:singleLine="true"
 			android:hint="Set Tujuan"
-			android:id="@+id/booking2_dest"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 		<EditText
@@ -171,6 +171,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/tariff"
 			android:layout_marginBottom="0dp"/>
+
 	</LinearLayout>
 
 </RelativeLayout>
