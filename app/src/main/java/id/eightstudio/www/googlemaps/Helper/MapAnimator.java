@@ -20,28 +20,29 @@ import java.util.List;
 public class MapAnimator {
 
     private static MapAnimator mapAnimator;
-
     private Polyline backgroundPolyline;
-
     private Polyline foregroundPolyline;
-
     private PolylineOptions optionsForeground;
-
     private AnimatorSet firstRunAnimSet;
-
     private AnimatorSet secondLoopRunAnimSet;
-
     static final int GREY = Color.parseColor("#FF9999");
-
 
     private MapAnimator(){
 
     }
 
-    public static MapAnimator getInstance(){
+	/**
+	 *
+	 * @return
+	 */
+	public static MapAnimator getInstance(){
         if(mapAnimator == null) mapAnimator = new MapAnimator();
         return mapAnimator;
     }
+
+	/**
+	 *
+	 */
 	public void clearPolyline(){
 		firstRunAnimSet.cancel();
 		secondLoopRunAnimSet.cancel();
@@ -49,6 +50,11 @@ public class MapAnimator {
 		foregroundPolyline.remove();
 	}
 
+	/**
+	 *
+	 * @param googleMap
+	 * @param bangaloreRoute
+	 */
     public void animateRoute(GoogleMap googleMap, List<LatLng> bangaloreRoute) {
 
 		if (firstRunAnimSet == null){

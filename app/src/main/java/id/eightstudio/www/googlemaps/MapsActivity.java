@@ -71,31 +71,36 @@ public class MapsActivity extends AppCompatActivity implements
         PlaceAutoCompleteHelper.onSuggestResultListener,
         PlaceAutoCompleteHelper.onTextFocusListener {
 
-    final int REQUEST_CHECK_SETTINGS = 122;
-    final int REQUEST_LOCATION = 125;
+    private final int REQUEST_CHECK_SETTINGS = 122;
+    private final int REQUEST_LOCATION = 125;
     //LatLng start_place, end_place;
     private EditText fok;
     private MyMarker centerMarker;
     private View searchArea, mapFrame, TariffVroot;
 
+    private List<Marker> drivers = new ArrayList<>();
     private AutoCompleteTextView addr_from, addr_to;
-
-    private LatLng home = new LatLng(-6.813738, 110.847039);
-
     private TariffView tariff;
     private ViewPropertyAnimator searchAreaAnimate;
-    boolean sbOnceMove = true;
     private VMargin vmargin;
-    boolean haszoom = false;
-    boolean movetomylocation = false;
-    private List<Marker> drivers = new ArrayList<>();
     private GoogleMap gmaps;
     private PlaceAutoCompleteHelper pickerHelper;
     private Geocoder geoCoder;
-    private boolean mMapIsTouched;
     private Marker firstMarker;
     private ToastProgress tprog;
 
+    private boolean movetomylocation = false;
+    private boolean mMapIsTouched;
+    private boolean haszoom = false;
+    private boolean sbOnceMove = true;
+
+    //Set default location
+    private LatLng home = new LatLng(-6.813738, 110.847039);
+
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +143,10 @@ public class MapsActivity extends AppCompatActivity implements
             }
         });
 
-        //
+
+        /**
+         *
+         */
         KeyboardVisibilityEvent.setEventListener(
                 this,
                 new KeyboardVisibilityEventListener() {
@@ -154,7 +162,9 @@ public class MapsActivity extends AppCompatActivity implements
         //waitIndicator.getIndeterminateDrawable().setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    //ViewSetup
+    /**
+     * ViewSetup
+     */
     private void setSearchbarMargin() {
 
         int sbheight = 0;
@@ -186,7 +196,9 @@ public class MapsActivity extends AppCompatActivity implements
         });
     }
 
-    //Menginisialisasi MapFragment
+    /**
+     * Menginisialisasi MapFragment
+     */
     private void initilizeMap() {
 
         MapFragment mapf = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -195,7 +207,9 @@ public class MapsActivity extends AppCompatActivity implements
 
     }
 
-    //Cek permisi aplikasi
+    /**
+     * Cek permisi aplikasi
+     */
     private void checkPerms() {
 
         //Jika permisi granted
@@ -214,7 +228,13 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Runtime permission on result
+    /**
+     * Runtime permission on result
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
@@ -250,6 +270,9 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     *
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void onMarkerClick() {
 
@@ -262,7 +285,11 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Clear pencarian
+    /**
+     * Clear pencarian
+     *
+     * @param p1
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onClick(View p1) {
@@ -275,7 +302,12 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Di trigger saat pencarian dipilih
+    /**
+     * Di trigger saat pencarian dipilih
+     *
+     * @param place
+     * @param act
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onSuggestResult(final Place place, final AutoCompleteTextView act) {
@@ -296,7 +328,11 @@ public class MapsActivity extends AppCompatActivity implements
         else setAddrValue(act == addr_from ? addr_from : addr_to, placelatlng);
     }
 
-    // Saat pencarian fokus
+    /**
+     * Saat pencarian fokus
+     *
+     * @param act
+     */
     @Override
     public void onFocus(final AutoCompleteTextView act) {
         LatLng actpos = (LatLng) act.getTag();
@@ -341,8 +377,14 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Saat rute siap
-    // Di trigger saat request mencari arah rute/navigasi menggunakan DirectionDrawHelper
+    /**
+     *
+     * Saat rute siap
+     * Di trigger saat request mencari arah rute/navigasi menggunakan DirectionDrawHelper
+     *
+     * @param path
+     * @param j
+     */
     @Override
     public void onNavigationReady(Polyline path, Jarak j) {
 
@@ -381,25 +423,39 @@ public class MapsActivity extends AppCompatActivity implements
         tariff.setJarak(String.format("Jarak (%s Km)", df.format(jarak)));
     }
 
-    // Ketika Gagal menemukan rute
+    /**
+     * Ketika Gagal menemukan rute
+     */
     @Override
     public void onNavigationFailed() {
         Toast.makeText(this, "Gagal menemukan rute. Cek koneksi Internet kamu", Toast.LENGTH_SHORT).show();
     }
 
-    // Ketika Gagal membuat koneksi ke layanan Google
+    /**
+     * Ketika Gagal membuat koneksi ke layanan Google
+     *
+     * @param result
+     */
     @Override
     public void onSuggestConnectionFailed(ConnectionResult result) {
         Toast.makeText(this, "Tidak bisa terhubung ke layanan Google.", Toast.LENGTH_SHORT).show();
     }
 
-    // Ketika Gagal memuat suggestion
+    /**
+     * Ketika Gagal memuat suggestion
+     *
+     * @param status
+     */
     @Override
     public void onSuggestFail(Status status) {
         Toast.makeText(this, "Tidak ditemukan, Cek koneksi Internet kamu", Toast.LENGTH_SHORT).show();
     }
 
-    // Saat maps siap
+    /**
+     * Saat maps siap
+     *
+     * @param map
+     */
     @Override
     public void onMapReady(final GoogleMap map) {
 
@@ -432,8 +488,11 @@ public class MapsActivity extends AppCompatActivity implements
             }
         });
 
-        // Camera idle (diam) listener
-        // di trigger saat pertama maps dijalankan dan saat selesai dari move (menggeser maps)
+        /**
+         *
+         * Camera idle (diam) listener
+         * di trigger saat pertama maps dijalankan dan saat selesai dari move (menggeser maps)
+         */
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -498,8 +557,12 @@ public class MapsActivity extends AppCompatActivity implements
         });
     }
 
-    // Fungsi fokus pada navigasi
-    // Di trigger saat keyboard hilang dari searchbar (biasanya saat menekan back) dan saat tekan back pada mode fokus navigasi
+    /**
+     *
+     * Fungsi fokus pada navigasi
+     * Di trigger saat keyboard hilang dari searchbar
+     * (biasanya saat menekan back) dan saat tekan back pada mode fokus navigasi
+     */
     private void setNavigationFocus() {
 
         centerMarker.setVisibility(View.GONE);
@@ -513,21 +576,35 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Fungsi untuk mencari tahu poin A dan B (dari dan lokasi tujuan)
+    /**
+     * Fungsi untuk mencari tahu poin A dan B (dari dan lokasi tujuan)
+     *
+     * @return
+     */
     private LatLng[] getNaviagatePoint() {
         LatLng addr_fromPos = (LatLng) addr_from.getTag();
         LatLng addr_toPos = (LatLng) addr_to.getTag();
         return new LatLng[]{addr_fromPos, addr_toPos};
     }
 
-    // Fungsi mengecek apakah rute siap (point A dan B sudah ditentukan)
+    /**
+     * Fungsi mengecek apakah rute siap (point A dan B sudah ditentukan)
+     *
+     * @return
+     */
     private boolean isNavigationReady() {
         LatLng[] na = getNaviagatePoint();
         return (na[0].latitude != 0 && na[1].latitude != 0);
     }
 
-    // Fungsi atur value di searchbar
-    // Di trigger saat pengguna mengklik hasil pencarian (place suggestion) atau menekan centerMarker
+    /**
+     *
+     * Fungsi atur value di searchbar
+     * Di trigger saat pengguna mengklik hasil pencarian (place suggestion) atau menekan centerMarker
+     *
+     * @param acc
+     * @param loc
+     */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void setAddrValue(AutoCompleteTextView acc, final LatLng loc) {
 
@@ -624,8 +701,13 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
-    // Override dispatchTouchEvent
-    // Untuk menentukan apakah view sedang di sentuh atau tidak
+    /**
+     * Override dispatchTouchEvent
+     * Untuk menentukan apakah view sedang di sentuh atau tidak
+     *
+     * @param ev
+     * @return
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
@@ -641,7 +723,9 @@ public class MapsActivity extends AppCompatActivity implements
         return super.dispatchTouchEvent(ev);
     }
 
-    // Saat tombol back ditekan
+    /**
+     * Saat tombol back ditekan
+     */
     @Override
     public void onBackPressed() {
 
@@ -694,6 +778,12 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -720,7 +810,6 @@ public class MapsActivity extends AppCompatActivity implements
 
                     case RESULT_CANCELED:
                         //GPSrequest();
-
                         new GPSRequest().GPSrequest(this, pickerHelper);
 
                         break;
@@ -729,6 +818,14 @@ public class MapsActivity extends AppCompatActivity implements
         }
     }
 
+
+    /**
+     *
+     * Option menu
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);

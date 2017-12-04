@@ -38,6 +38,9 @@ import com.google.android.gms.location.LocationServices;
 import id.eightstudio.www.googlemaps.R;
 
 
+/**
+ *
+ */
 public class PlaceAutoCompleteHelper implements GoogleApiClient.OnConnectionFailedListener,
 		Application.ActivityLifecycleCallbacks, View.OnFocusChangeListener {
 

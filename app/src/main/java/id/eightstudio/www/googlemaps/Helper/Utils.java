@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import id.eightstudio.www.googlemaps.Model.VMargin;
 
 public class Utils {
+	private static final String TAG = "Utils";
 
 	private static Utils.OnCameraComplete camcallback;
 
@@ -61,6 +62,7 @@ public class Utils {
         int indexOfNearestPointToCentre = randomDistances.indexOf(Collections.min(randomDistances));
         return randomPoints.get(indexOfNearestPointToCentre);
     }
+
 
     public static double distance(LatLng pos1, LatLng pos2) {
 		Location loc1 = new Location("");
@@ -132,17 +134,17 @@ public class Utils {
 		if (addr_startPoint.y < padding.searchbar_margin || addr_endPoint.y < padding.searchbar_margin) {
 
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-1f), 1000, cameraOnFinish);
-			android.util.Log.d("jos", "Batas atas");
+			android.util.Log.d(TAG, "Batas Atas");
 
 		} else if (addr_startPoint.x < dp2px(ctx, 10) || addr_endPoint.x < dp2px(ctx, 10) || addr_startPoint.x > maxX - dp2px(ctx, 10) || addr_endPoint.x > maxX - dp2px(ctx, 10)) {
 
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-0.2f), 1000, cameraOnFinish);
-			android.util.Log.d("jos", "Batas samping");
+			android.util.Log.d(TAG, "Batas Samping");
 
 		} else if (addr_startPoint.y > (dm.heightPixels - padding.tariffview_margin) || addr_endPoint.y > (dm.heightPixels - padding.tariffview_margin)) {
 
 			gmap.animateCamera(CameraUpdateFactory.zoomBy(-0.2f), 1000, cameraOnFinish);
-			android.util.Log.d("jos", "Batas bawah");
+			android.util.Log.d(TAG, "Batas Bawah");
 
 		} else {
 
@@ -150,9 +152,9 @@ public class Utils {
 
 		}
 
-		android.util.Log.d("jos", "batas: " + (dm.heightPixels - padding.tariffview_margin));
-		android.util.Log.d("jos", "marker: " + addr_endPoint.y);
-		android.util.Log.d("jos", "70dp: " + dp2px(ctx, 70));
+		android.util.Log.d(TAG, "Batas: " + (dm.heightPixels - padding.tariffview_margin));
+		android.util.Log.d(TAG, "Marker: " + addr_endPoint.y);
+		android.util.Log.d(TAG, "70dp: " + dp2px(ctx, 70));
 	}
 	
 	public static void requestCenterCamera(final Context ctx, final GoogleMap gmap, final LatLng start, final LatLng end, final VMargin padding, OnCameraComplete x) {
@@ -171,6 +173,12 @@ public class Utils {
 			});
 	}
 
+	/**
+	 *
+	 * @param context
+	 * @param dipValue
+	 * @return
+	 */
 	public static float dp2px(Context context, float dipValue) {
 		DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);

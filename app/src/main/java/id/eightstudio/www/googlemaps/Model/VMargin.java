@@ -1,7 +1,7 @@
 package id.eightstudio.www.googlemaps.Model;
 
-public class VMargin
-{
+public class VMargin {
+
 	public int searchbar_margin, tariffview_margin;
 
 	public VMargin(int searchbar_margin, int tariffview_margin) {

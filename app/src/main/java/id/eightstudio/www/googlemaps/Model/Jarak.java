@@ -2,8 +2,8 @@ package id.eightstudio.www.googlemaps.Model;
 
 import org.json.*;
 
-public class Jarak
-{
+public class Jarak {
+
 	public String durationText, distanceText;
 	public long duration,distance;
 	public double distanceInKm;
@@ -17,6 +17,7 @@ public class Jarak
 	}
 
 	public Jarak(JSONObject data){
+
 		try {
 			JSONObject dur=data.getJSONObject("duration");
 			JSONObject dist=data.getJSONObject("distance");
@@ -25,6 +26,8 @@ public class Jarak
 			this.distance=dist.getLong("value");
 			this.distanceText=dist.getString("text");
 			this.distanceInKm=this.distance * 0.001;
-		} catch (Exception e) {}
+		} catch (Exception e) {
+
+		}
 	}
 }
